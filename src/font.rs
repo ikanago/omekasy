@@ -1,5 +1,7 @@
+use clap::ArgEnum;
 use std::collections::HashMap;
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq, ArgEnum)]
 pub enum Font {
     MathBold,
 }
