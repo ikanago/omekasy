@@ -1,0 +1,10 @@
+.env*
+.git
+.gitattributes
+.github
+.gitignore
+Dockerfile
+LICENSE
+*.md
+renovate.json
+target

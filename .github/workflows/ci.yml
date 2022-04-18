@@ -1,0 +1,39 @@
+name: 'CI'
+
+on:
+  push:
+  pull_request:
+
+env:
+  CARGO_INCREMENTAL: 0
+
+jobs:
+  ci:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          toolchain: stable
+          components: rustfmt, clippy
+
+      - name: Cache dependencies
+        uses: Swatinem/rust-cache@v1
+
+      - name: Check format
+        run: cargo fmt -- --check
+
+      - name: Build
+        run: cargo build --locked --verbose
+
+      - run: rustup component add clippy
+      - uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features -- -D warnings
+
+      - name: Run tests
+        run: cargo test --verbose
