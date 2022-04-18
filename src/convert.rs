@@ -31,7 +31,7 @@ mod tests {
     fn mathbold() {
         let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv";
         assert_eq!(
-            "𝟴𝗪𝘆𝗺𝗫𝗯𝗟𝗩𝟯𝗻𝗜𝗡𝗨𝗵𝗢𝗼𝗤𝗸𝗞𝗚𝗳𝘂𝗬𝟵𝗛𝘀𝗭𝗦𝗖𝟲𝟳𝟱𝗷𝘇𝗕𝗘𝘁𝗔𝗧𝗗𝗙𝗠𝗥𝗴𝗣𝗽𝗲𝗮𝘅𝗶𝗝𝗰𝗿𝟬𝗾𝟰𝗹𝟭𝘄𝟮𝗱𝘃",
+            "𝟖𝐖𝐲𝐦𝐗𝐛𝐋𝐕𝟑𝐧𝐈𝐍𝐔𝐡𝐎𝐨𝐐𝐤𝐊𝐆𝐟𝐮𝐘𝟗𝐇𝐬𝐙𝐒𝐂𝟔𝟕𝟓𝐣𝐳𝐁𝐄𝐭𝐀𝐓𝐃𝐅𝐌𝐑𝐠𝐏𝐩𝐞𝐚𝐱𝐢𝐉𝐜𝐫𝟎𝐪𝟒𝐥𝟏𝐰𝟐𝐝𝐯",
             convert(source, Font::MathBold)
         );
     }
