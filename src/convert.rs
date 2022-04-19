@@ -5,7 +5,7 @@ pub fn convert(source: &[char], font: Font) -> String {
     source
         .iter()
         .map(|original| {
-            if let Some(converted) = mapping.get(&original) {
+            if let Some(converted) = mapping.get(original) {
                 converted
             } else {
                 original

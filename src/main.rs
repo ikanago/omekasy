@@ -1,8 +1,17 @@
-use std::io::{self, Write};
+use std::{
+    io::{self, Write},
+    time::Duration,
+};
 
 use clap::Parser;
+use crossterm::{
+    cursor::{MoveLeft, MoveRight, MoveToNextLine, MoveToPreviousLine},
+    event::{poll, read, Event, KeyCode, KeyEvent},
+    style::Print,
+    terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
+    ExecutableCommand, QueueableCommand,
+};
 use font::Font;
-use termion::{cursor, event::Key, input::TermRead, raw::IntoRawMode, clear};
 
 use crate::convert::convert;
 
@@ -20,38 +29,89 @@ struct Cli {
     source: String,
 }
 
-fn main() {
+fn main() -> crossterm::Result<()> {
     // let cli = Cli::parse();
 
     // println!("{}", convert(&cli.source, cli.font));
 
-    let stdin = io::stdin();
-    let mut stdin = stdin.lock().keys();
-    let stdout = io::stdout();
-    let stdout = stdout.lock();
-    let mut stdout = stdout.into_raw_mode().unwrap();
+    let mut stdout = io::stdout();
 
     let mut source = Vec::new();
+    let fonts = vec![Font::MathBold, Font::Monospace];
+    let mut current_font = 0;
+
+    enable_raw_mode()?;
+
+    let num_whole_lines = fonts.len() + 1;
+    for _ in 0..num_whole_lines {
+        stdout.queue(Print("\r\n"))?;
+    }
+    stdout.queue(MoveToPreviousLine(num_whole_lines as u16))?;
+    stdout.flush()?;
 
     loop {
-        let b = stdin.next().unwrap().unwrap();
-        match b {
-            Key::Backspace => {
-                write!(stdout, "{}{}{}", cursor::Left(1), clear::AfterCursor, cursor::Save).unwrap();
-                source.pop();
+        let mut has_updated = false;
+
+        if poll(Duration::from_millis(50))? {
+            if let Event::Key(KeyEvent { code, .. }) = read()? {
+                match code {
+                    KeyCode::Backspace => {
+                        stdout.execute(MoveLeft(1))?;
+                        source.pop();
+                    }
+                    KeyCode::Up => {
+                        if current_font > 0 {
+                            current_font -= 1;
+                        }
+                    }
+                    KeyCode::Down => {
+                        if current_font < fonts.len() - 1 {
+                            current_font += 1;
+                        }
+                    }
+                    KeyCode::Enter => {
+                        break;
+                    }
+                    KeyCode::Char(c) => {
+                        source.push(c);
+                    }
+                    _ => {}
+                }
+
+                has_updated = true;
             }
-            Key::Char('q') => {
-                break;
-            }
-            Key::Char(c) => {
-                write!(stdout, "{}{}", c, cursor::Save).unwrap();
-                source.push(c);
-            }
-            _ => {}
         }
-        write!(stdout, "\r\n{}", clear::AfterCursor).unwrap();
-        write!(stdout, "{}", convert(&source, Font::MathBold)).unwrap();
-        write!(stdout, "{}", cursor::Restore).unwrap();
-        stdout.flush().unwrap();
+
+        if has_updated {
+            stdout
+                .execute(MoveLeft(source.len() as u16))?
+                .execute(Clear(ClearType::CurrentLine))?
+                .execute(Print(source.iter().collect::<String>()))?;
+
+            for (i, &font) in fonts.iter().enumerate() {
+                let selection = if i == current_font { 'x' } else { ' ' };
+                stdout
+                    .queue(MoveToNextLine(1))?
+                    .queue(Clear(ClearType::CurrentLine))?
+                    .queue(Print(format!("[{}]{}", selection, convert(&source, font))))?;
+            }
+            stdout.flush()?;
+            stdout
+                .execute(MoveToPreviousLine((num_whole_lines - 1) as u16))?
+                .execute(MoveRight(source.len() as u16))?;
+        }
     }
+
+    stdout
+        .execute(MoveLeft(source.len() as u16))?
+        .execute(Clear(ClearType::CurrentLine))?
+        .execute(Print(format!(
+            "{}\r\n",
+            convert(&source, fonts[current_font])
+        )))?
+        .execute(Clear(ClearType::FromCursorDown))?;
+
+    disable_raw_mode()?;
+
+    Ok(())
 }
