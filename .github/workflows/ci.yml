@@ -2,14 +2,18 @@ name: 'CI'
 
 on:
   push:
+    tags-ignore:
+      - 'v*'
+    paths-ignore:
+      - '**.md'
   pull_request:
 
 env:
   CARGO_INCREMENTAL: 0
 
 jobs:
-  ci:
-    runs-on: ubuntu-20.04
+  static-analysis:
+    runs-on: 'ubuntu-20.04'
     steps:
       - uses: actions/checkout@v3
 
@@ -34,6 +38,26 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --all-features -- -D warnings
+
+  unit-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ['ubuntu-18.04', 'ubuntu-20.04', 'macos-latest', 'win-msvc']
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          toolchain: stable
+
+      - name: Cache dependencies
+        uses: Swatinem/rust-cache@v1
+
+      - name: Build
+        run: cargo build --locked --verbose
 
       - name: Run tests
         run: cargo test --verbose
