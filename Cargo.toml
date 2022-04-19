@@ -1,6 +1,7 @@
 [package]
 name = "omekasy"
 version = "0.1.0"
+authors = ["ikanago <ikanago-dev@protonmail.com>"]
 edition = "2021"
 
 [dependencies]

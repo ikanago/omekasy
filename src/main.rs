@@ -2,27 +2,42 @@ use clap::Parser;
 use font::Font;
 use prompt::Prompt;
 
+use crate::convert::convert;
+
 mod convert;
 mod font;
 mod prompt;
 
 #[derive(Parser)]
-#[clap(name = "omekasy")]
-#[clap(author = "ikanago <ikanago-dev@protonmail.com>")]
-#[clap(version = "0.1.0")]
-#[clap(about = "Decorate your input")]
+#[clap(author)]
+#[clap(version)]
+#[clap(about)]
+/// Decorate latin alphabet and numbers in your input with various font; special characters in
+/// Unicode.
+///
+/// If you provide neither font type nor input, interactive prompt is displayed.
 struct Cli {
     #[clap(short, long, arg_enum)]
-    font: Font,
-    source: String,
+    font: Option<Font>,
+    input: Option<String>,
 }
 
 fn main() -> crossterm::Result<()> {
-    // let cli = Cli::parse();
+    let cli: Cli = Cli::parse();
 
-    // println!("{}", convert(&cli.source, cli.font));
+    match (cli.input, cli.font) {
+        (Some(input), Some(font)) => {
+            println!("{}", convert(&input.chars().collect::<Vec<_>>(), font));
+        }
+        (None, None) => {
+            let fonts = vec![Font::MathBold, Font::Monospace];
+            let mut prompt = Prompt::new(fonts);
+            prompt.start_prompt()?;
+        }
+        _ => {
+            eprintln!("Specifying only one of font and input is not allowed.");
+        }
+    }
 
-    let fonts = vec![Font::MathBold, Font::Monospace];
-    let mut prompt = Prompt::new(fonts);
-    prompt.start_prompt()
+    Ok(())
 }
