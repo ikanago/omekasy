@@ -2,8 +2,8 @@ name: 'Release'
 
 on:
   push:
-    tags:
-      - 'v*'
+    # tags:
+    # - 'v*'
 
 jobs:
   release:
@@ -55,7 +55,9 @@ jobs:
           STRIP="strip"
           [ "${{ matrix.job.target }}" = "x86_64-pc-windows-msvc" ] && STRIP=""
 
-          [ -n "${STRIP}" ] && "${STRIP}" "${{ env.BIN_PATH }}"
+          if [ -n "${STRIP}" ]; then
+            "${STRIP}" "${{ env.BIN_PATH }}"
+          fi
 
       - name: Create tarball
         shell: bash
