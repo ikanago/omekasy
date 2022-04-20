@@ -43,9 +43,7 @@ jobs:
       - name: Set up path
         run: |
           EXE_SUFFIX=""
-          case ${{ matrix.job.target }} in
-            *-pc-windows-*) EXE_SUFFIX=".exe" ;;
-          esac;
+          [ "${{ matrix.job.target }}" = "x86_64-pc-windows-msvc" ] && EXE_SUFFIX=".exe"
 
           BIN_PATH="target/${{ matrix.job.target }}/release/omekasy${EXE_SUFFIX}"
           echo "BIN_PATH=${BIN_PATH}" >> "${GITHUB_ENV}"
