@@ -41,6 +41,7 @@ jobs:
         run: cargo build --locked --verbose --release --target=${{ matrix.job.target }}
 
       - name: Set up path
+        shell: bash
         run: |
           EXE_SUFFIX=""
           [ "${{ matrix.job.target }}" = "x86_64-pc-windows-msvc" ] && EXE_SUFFIX=".exe"
@@ -49,6 +50,7 @@ jobs:
           echo "BIN_PATH=${BIN_PATH}" >> "${GITHUB_ENV}"
 
       - name: Strip binary
+        shell: bash
         run: |
           STRIP="strip"
           [ "${{ matrix.job.target }}" = "x86_64-pc-windows-msvc" ] && STRIP=""
