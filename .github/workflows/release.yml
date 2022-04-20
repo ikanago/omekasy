@@ -8,6 +8,8 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     outputs:
       PROJECT_VERSION: ${{ env.PROJECT_VERSION }}
+    env:
+      PROJECT_NAME: "omekasy"
     strategy:
       matrix:
         job:
