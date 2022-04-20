@@ -54,7 +54,6 @@ jobs:
           [ -n "${STRIP}" ] && "${STRIP}" "${{ env.BIN_PATH }}"
 
       - name: Create tarball
-        if: ${{ contains(github.ref, '/tags/') }}
         shell: bash
         run: |
           PKG_SUFFIX=".tar.gz" ; case ${{ matrix.job.target }} in *-pc-windows-*) PKG_SUFFIX=".zip" ;; esac;
@@ -74,6 +73,7 @@ jobs:
           fi
 
       - name: Publish
+        if: ${{ contains(github.ref, '/tags/') }}
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ env.PKG_PATH }}
