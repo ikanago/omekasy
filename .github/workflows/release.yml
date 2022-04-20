@@ -1,0 +1,100 @@
+name: 'Release'
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ${{ matrix.job.os }}
+    outputs:
+      PROJECT_VERSION: ${{ env.PROJECT_VERSION }}
+    env:
+      PROJECT_NAME: "omekasy"
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { target: x86_64-unknown-linux-gnu, os: ubuntu-20.04 }
+          - { target: x86_64-apple-darwin, os: macos-latest }
+          - { target: x86_64-pc-windows-msvc, os: windows-2019 }
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          toolchain: stable
+          target: ${{ matrix.job.target }}
+
+      - name: Get the release version from the tag
+        shell: bash
+        run: |
+          echo "PROJECT_VERSION=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_ENV"
+          echo "Version: ${{ env.PROJECT_VERSION }}"
+
+      - name: Build release
+        run: cargo build --locked --verbose --release --target=${{ matrix.job.target }}
+
+      - name: Set up path
+        shell: bash
+        run: |
+          EXE_SUFFIX=""
+          [ "${{ matrix.job.target }}" = "x86_64-pc-windows-msvc" ] && EXE_SUFFIX=".exe"
+
+          BIN_PATH="target/${{ matrix.job.target }}/release/omekasy${EXE_SUFFIX}"
+          echo "BIN_PATH=${BIN_PATH}" >> "${GITHUB_ENV}"
+
+      - name: Strip binary
+        shell: bash
+        run: |
+          STRIP="strip"
+          [ "${{ matrix.job.target }}" = "x86_64-pc-windows-msvc" ] && STRIP=""
+
+          if [ -n "${STRIP}" ]; then
+            "${STRIP}" "${{ env.BIN_PATH }}"
+          fi
+
+      - name: Create tarball
+        shell: bash
+        run: |
+          PKG_SUFFIX=".tar.gz" ; case ${{ matrix.job.target }} in *-pc-windows-*) PKG_SUFFIX=".zip" ;; esac;
+          PKG_BASENAME="${PROJECT_NAME}-v${{ env.PROJECT_VERSION }}-${{ matrix.job.target }}"
+          PKG_PATH="${PKG_BASENAME}${PKG_SUFFIX}"
+          echo "PKG_PATH=${PKG_PATH}" >> "${GITHUB_ENV}"
+
+          PKG_DIR="archive"
+          mkdir -p "${PKG_DIR}"
+          cp {README.md,LICENSE} "$PKG_DIR"
+          cp "${{ env.BIN_PATH }}" "${PKG_DIR}"
+
+          if [ "${{ matrix.job.os }}" = "windows-2019" ]; then
+            7z a "${PKG_PATH}" "${PKG_DIR}"
+          else
+            tar czf "${PKG_PATH}" "${PKG_DIR}"
+          fi
+
+      - name: Publish
+        if: ${{ contains(github.ref, '/tags/') }}
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ env.PKG_PATH }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  cargo-publish:
+    runs-on: ubuntu-20.04
+    needs: release
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cargo publish
+        run: |
+          git config --global user.email "runner@gha.local"
+          git config --global user.name "Github Action"
+          cargo publish --allow-dirty --token ${{ secrets.CRATES_IO_TOKEN }}
