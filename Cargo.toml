@@ -2,6 +2,10 @@
 name = "omekasy"
 version = "0.1.0"
 authors = ["ikanago <ikanago-dev@protonmail.com>"]
+description = "Decorate latin alphabet and numbers in your input with various font; special characters in Unicode"
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/ikanago/omekasy"
 edition = "2021"
 
 [dependencies]
