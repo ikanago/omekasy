@@ -2,11 +2,11 @@ name: 'CI'
 
 on:
   push:
-    tags-ignore:
-      - 'v*'
     paths-ignore:
       - '**.md'
   pull_request:
+    paths-ignore:
+      - '**.md'
 
 env:
   CARGO_INCREMENTAL: 0
