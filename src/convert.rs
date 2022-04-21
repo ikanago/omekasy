@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use crate::font::{Font, FontMap};
 
+/// This struct holds each font's mapping between normal characters to ones of the font.
 pub struct Converter {
     font_mappings: HashMap<Font, FontMap>,
 }
@@ -16,6 +17,8 @@ impl Converter {
         Self { font_mappings }
     }
 
+    /// Convert given characters to specified font.
+    /// Non-alphanumeric characters remain unchanged.
     pub fn convert(&self, source: &[char], font: Font) -> String {
         let mapping = self
             .font_mappings
