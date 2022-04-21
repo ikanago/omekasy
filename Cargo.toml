@@ -1,8 +1,8 @@
 [package]
 name = "omekasy"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["ikanago <ikanago-dev@protonmail.com>"]
-description = "Decorate latin alphabet and numbers in your input with various font; special characters in Unicode"
+description = "Decorate alphanumeric characters in your input with various font; special characters in Unicode"
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/ikanago/omekasy"
