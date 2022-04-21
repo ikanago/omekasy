@@ -63,6 +63,50 @@ mod tests {
     }
 
     #[test]
+    fn sans() {
+        let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv"
+            .chars()
+            .collect::<Vec<_>>();
+        assert_eq!(
+            "𝟪𝖶𝗒𝗆𝖷𝖻𝖫𝖵𝟥𝗇𝖨𝖭𝖴𝗁𝖮𝗈𝖰𝗄𝖪𝖦𝖿𝗎𝖸𝟫𝖧𝗌𝖹𝖲𝖢𝟨𝟩𝟧𝗃𝗓𝖡𝖤𝗍𝖠𝖳𝖣𝖥𝖬𝖱𝗀𝖯𝗉𝖾𝖺𝗑𝗂𝖩𝖼𝗋𝟢𝗊𝟦𝗅𝟣𝗐𝟤𝖽𝗏",
+            convert(&source, Font::Sans)
+        );
+    }
+
+    #[test]
+    fn sans_bold() {
+        let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv"
+            .chars()
+            .collect::<Vec<_>>();
+        assert_eq!(
+            "𝟴𝗪𝘆𝗺𝗫𝗯𝗟𝗩𝟯𝗻𝗜𝗡𝗨𝗵𝗢𝗼𝗤𝗸𝗞𝗚𝗳𝘂𝗬𝟵𝗛𝘀𝗭𝗦𝗖𝟲𝟳𝟱𝗷𝘇𝗕𝗘𝘁𝗔𝗧𝗗𝗙𝗠𝗥𝗴𝗣𝗽𝗲𝗮𝘅𝗶𝗝𝗰𝗿𝟬𝗾𝟰𝗹𝟭𝘄𝟮𝗱𝘃",
+            convert(&source, Font::SansBold)
+        );
+    }
+
+    #[test]
+    fn sans_italic() {
+        let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv"
+            .chars()
+            .collect::<Vec<_>>();
+        assert_eq!(
+            "𝟴𝘞𝘺𝘮𝘟𝘣𝘓𝘝𝟯𝘯𝘐𝘕𝘜𝘩𝘖𝘰𝘘𝘬𝘒𝘎𝘧𝘶𝘠𝟵𝘏𝘴𝘡𝘚𝘊𝟲𝟳𝟱𝘫𝘻𝘉𝘌𝘵𝘈𝘛𝘋𝘍𝘔𝘙𝘨𝘗𝘱𝘦𝘢𝘹𝘪𝘑𝘤𝘳𝟬𝘲𝟰𝘭𝟭𝘸𝟮𝘥𝘷",
+            convert(&source, Font::SansItalic)
+        );
+    }
+
+    #[test]
+    fn sans_bold_italic() {
+        let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv"
+            .chars()
+            .collect::<Vec<_>>();
+        assert_eq!(
+            "𝟴𝙒𝙮𝙢𝙓𝙗𝙇𝙑𝟯𝙣𝙄𝙉𝙐𝙝𝙊𝙤𝙌𝙠𝙆𝙂𝙛𝙪𝙔𝟵𝙃𝙨𝙕𝙎𝘾𝟲𝟳𝟱𝙟𝙯𝘽𝙀𝙩𝘼𝙏𝘿𝙁𝙈𝙍𝙜𝙋𝙥𝙚𝙖𝙭𝙞𝙅𝙘𝙧𝟬𝙦𝟰𝙡𝟭𝙬𝟮𝙙𝙫",
+            convert(&source, Font::SansBoldItalic)
+        );
+    }
+
+    #[test]
     fn script() {
         let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv"
             .chars()
@@ -92,6 +136,17 @@ mod tests {
         assert_eq!(
             "𝟾𝚆𝚢𝚖𝚇𝚋𝙻𝚅𝟹𝚗𝙸𝙽𝚄𝚑𝙾𝚘𝚀𝚔𝙺𝙶𝚏𝚞𝚈𝟿𝙷𝚜𝚉𝚂𝙲𝟼𝟽𝟻𝚓𝚣𝙱𝙴𝚝𝙰𝚃𝙳𝙵𝙼𝚁𝚐𝙿𝚙𝚎𝚊𝚡𝚒𝙹𝚌𝚛𝟶𝚚𝟺𝚕𝟷𝚠𝟸𝚍𝚟",
             convert(&source, Font::Monospace)
+        );
+    }
+
+    #[test]
+    fn blackboard() {
+        let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv"
+            .chars()
+            .collect::<Vec<_>>();
+        assert_eq!(
+            "𝟠𝕎𝕪𝕞𝕏𝕓𝕃𝕍𝟛𝕟𝕀ℕ𝕌𝕙𝕆𝕠ℚ𝕜𝕂𝔾𝕗𝕦𝕐𝟡ℍ𝕤ℤ𝕊ℂ𝟞𝟟𝟝𝕛𝕫𝔹𝔼𝕥𝔸𝕋𝔻𝔽𝕄ℝ𝕘ℙ𝕡𝕖𝕒𝕩𝕚𝕁𝕔𝕣𝟘𝕢𝟜𝕝𝟙𝕨𝟚𝕕𝕧",
+            convert(&source, Font::Blackboard)
         );
     }
 }
