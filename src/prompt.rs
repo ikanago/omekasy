@@ -3,7 +3,7 @@ use std::{
     time::Duration,
 };
 
-use crate::convert::convert;
+use crate::convert::Converter;
 use crate::font::Font;
 
 use crossterm::{
@@ -11,7 +11,7 @@ use crossterm::{
     event::{poll, read, Event, KeyCode, KeyEvent},
     style::Print,
     terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
-    ExecutableCommand,
+    ExecutableCommand, QueueableCommand,
 };
 
 pub enum Action {
@@ -23,6 +23,7 @@ pub enum Action {
 pub struct Prompt {
     input: Vec<char>,
     fonts: Vec<Font>,
+    converter: Converter,
     current_font: usize,
     num_whole_lines: usize,
 }
@@ -31,10 +32,13 @@ impl Prompt {
     const POLL_DURATION_MS: u64 = 50;
 
     pub fn new(fonts: Vec<Font>) -> Self {
+        let converter = Converter::new(&fonts);
         let num_whole_lines = fonts.len() + 1;
+
         Self {
             input: Vec::new(),
             fonts,
+            converter,
             current_font: 0,
             num_whole_lines,
         }
@@ -54,7 +58,8 @@ impl Prompt {
             .execute(Clear(ClearType::CurrentLine))?
             .execute(Print(format!(
                 "{}\r\n",
-                convert(&self.input, self.fonts[self.current_font])
+                self.converter
+                    .convert(&self.input, self.fonts[self.current_font])
             )))?
             .execute(Clear(ClearType::FromCursorDown))?;
 
@@ -89,9 +94,7 @@ impl Prompt {
                 Action::Update => {
                     self.render_input(w)?;
 
-                    for i in 0..self.fonts.len() {
-                        self.render_candidate(w, i)?;
-                    }
+                    self.render_candidates(w)?;
 
                     w.execute(MoveToPreviousLine((self.num_whole_lines - 1) as u16))?
                         .execute(MoveRight(self.input.len() as u16))?;
@@ -155,23 +158,23 @@ impl Prompt {
         Ok(())
     }
 
-    fn render_candidate<W>(&mut self, w: &mut W, font_index: usize) -> crossterm::Result<()>
+    fn render_candidates<W>(&mut self, w: &mut W) -> crossterm::Result<()>
     where
         W: Write,
     {
-        let selection = if font_index == self.current_font {
-            'x'
-        } else {
-            ' '
-        };
+        for i in 0..self.fonts.len() {
+            let selection = if i == self.current_font { 'x' } else { ' ' };
 
-        w.execute(MoveToNextLine(1))?
-            .execute(Clear(ClearType::CurrentLine))?
-            .execute(Print(format!(
-                "[{}]{}",
-                selection,
-                convert(&self.input, self.fonts[font_index])
-            )))?;
+            w.queue(MoveToNextLine(1))?
+                .queue(Clear(ClearType::CurrentLine))?
+                .queue(Print(format!(
+                    "[{}]{}",
+                    selection,
+                    self.converter.convert(&self.input, self.fonts[i])
+                )))?;
+        }
+        w.flush()?;
+
         Ok(())
     }
 }

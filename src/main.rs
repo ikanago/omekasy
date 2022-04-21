@@ -2,7 +2,7 @@ use clap::Parser;
 use font::Font;
 use prompt::Prompt;
 
-use crate::convert::convert;
+use crate::convert::Converter;
 
 mod convert;
 mod font;
@@ -27,10 +27,26 @@ fn main() -> crossterm::Result<()> {
 
     match (cli.input, cli.font) {
         (Some(input), Some(font)) => {
-            println!("{}", convert(&input.chars().collect::<Vec<_>>(), font));
+            let converter = Converter::new(&[font]);
+            println!(
+                "{}",
+                converter.convert(&input.chars().collect::<Vec<_>>(), font)
+            );
         }
         (None, None) => {
-            let fonts = vec![Font::MathBold, Font::Monospace];
+            let fonts = vec![
+                Font::Bold,
+                Font::Italic,
+                Font::BoldItalic,
+                Font::Sans,
+                Font::SansBold,
+                Font::SansItalic,
+                Font::SansBoldItalic,
+                Font::Script,
+                Font::BoldScript,
+                Font::Monospace,
+                Font::Blackboard,
+            ];
             let mut prompt = Prompt::new(fonts);
             prompt.start_prompt()?;
         }
