@@ -1,7 +1,9 @@
 use clap::ArgEnum;
 use std::collections::HashMap;
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, ArgEnum)]
+pub type FontMap = HashMap<char, char>;
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, ArgEnum)]
 pub enum Font {
     Bold,
     Italic,
@@ -17,7 +19,7 @@ pub enum Font {
 }
 
 impl Font {
-    pub fn characters(&self) -> HashMap<char, char> {
+    pub fn characters(&self) -> FontMap {
         let source = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         let target = match self {
             Font::Bold => "𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗",
