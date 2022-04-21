@@ -30,7 +30,7 @@ fn main() -> crossterm::Result<()> {
             println!("{}", convert(&input.chars().collect::<Vec<_>>(), font));
         }
         (None, None) => {
-            let fonts = vec![Font::MathBold, Font::Monospace];
+            let fonts = vec![Font::Bold, Font::Monospace];
             let mut prompt = Prompt::new(fonts);
             prompt.start_prompt()?;
         }
