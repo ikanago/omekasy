@@ -4,16 +4,24 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![](https://img.shields.io/crates/v/omekasy.svg)](https://crates.io/crates/omekasy)
 
+[![asciicast](https://asciinema.org/a/u9xnGJqq20NajNHGEl6J5vizE.svg)](https://asciinema.org/a/u9xnGJqq20NajNHGEl6J5vizE)
+
 `omekasy` is a command line application that converts alphanumeric characters in your input to various styles defined in Unicode.
 `omekasy` means "dress up" in Japanese.
 
 ## Installation
-You can download binaries from [Releases](https://github.com/ikanago/omekasy/releases).
+### Homebrew
+```bash
+brew install ikanago/tap/omekasy
+```
 
-Or you can build it by yourself.
+### Cargo
 ```bash
 cargo install omekasy
 ```
+
+### Binaries
+You can download binaries from [Releases](https://github.com/ikanago/omekasy/releases).
 
 ## Usage
 Just run without any options or arguments, a prompt will be shown up.
