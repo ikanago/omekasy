@@ -9,7 +9,7 @@ use crate::font::Font;
 use crossterm::{
     cursor::{MoveLeft, MoveRight, MoveToNextLine, MoveToPreviousLine},
     event::{poll, read, Event, KeyCode, KeyEvent, KeyModifiers},
-    style::Print,
+    style::{Print, Stylize},
     terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
     ExecutableCommand, QueueableCommand,
 };
@@ -31,6 +31,7 @@ pub struct Prompt {
 
 impl Prompt {
     const POLL_DURATION_MS: u64 = 50;
+    const PROMPT_SYMBOL: &'static str = "> ";
 
     pub fn new(fonts: Vec<Font>) -> Self {
         let converter = Converter::new(&fonts);
@@ -51,11 +52,12 @@ impl Prompt {
 
         let mut stderr = io::stderr();
         self.initialize_prompt(&mut stderr)?;
+        self.render_input(&mut stderr)?;
 
         self.start_event_loop(&mut stderr)?;
 
         io::stdout()
-            .execute(MoveLeft(self.input.len() as u16))?
+            .execute(MoveLeft(self.input_line_len()))?
             .execute(Clear(ClearType::CurrentLine))?
             .execute(Print(format!(
                 "{}\r\n",
@@ -102,13 +104,17 @@ impl Prompt {
                     self.render_candidates(w)?;
 
                     w.execute(MoveToPreviousLine((self.num_whole_lines - 1) as u16))?
-                        .execute(MoveRight(self.input.len() as u16))?;
+                        .execute(MoveRight(self.input_line_len()))?;
                 }
                 Action::None => {}
             }
         }
 
         Ok(())
+    }
+
+    fn input_line_len(&self) -> u16 {
+        (Self::PROMPT_SYMBOL.len() + self.input.len()) as u16
     }
 
     fn handle_key_event<W>(&mut self, w: &mut W) -> crossterm::Result<Action>
@@ -159,9 +165,13 @@ impl Prompt {
     where
         W: Write,
     {
-        w.execute(MoveLeft(self.input.len() as u16))?
+        w.execute(MoveLeft(self.input_line_len()))?
             .execute(Clear(ClearType::CurrentLine))?
-            .execute(Print(self.input.iter().collect::<String>()))?;
+            .execute(Print(format!(
+                "{}{}",
+                Self::PROMPT_SYMBOL.blue(),
+                self.input.iter().collect::<String>()
+            )))?;
         Ok(())
     }
 
@@ -170,13 +180,13 @@ impl Prompt {
         W: Write,
     {
         for i in 0..self.fonts.len() {
-            let selection = if i == self.current_font { 'x' } else { ' ' };
+            let selection = if i == self.current_font { "> " } else { "  " };
 
             w.queue(MoveToNextLine(1))?
                 .queue(Clear(ClearType::CurrentLine))?
                 .queue(Print(format!(
-                    "[{}]{}",
-                    selection,
+                    "{}{}",
+                    selection.red(),
                     self.converter.convert(&self.input, self.fonts[i])
                 )))?;
         }
