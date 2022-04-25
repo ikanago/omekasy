@@ -8,7 +8,7 @@ use crate::font::Font;
 
 use crossterm::{
     cursor::{MoveLeft, MoveRight, MoveToNextLine, MoveToPreviousLine},
-    event::{poll, read, Event, KeyCode, KeyEvent},
+    event::{poll, read, Event, KeyCode, KeyEvent, KeyModifiers},
     style::Print,
     terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
     ExecutableCommand, QueueableCommand,
@@ -116,10 +116,11 @@ impl Prompt {
         W: Write,
     {
         if poll(Duration::from_millis(Self::POLL_DURATION_MS))? {
-            if let Event::Key(KeyEvent { code, .. }) = read()? {
+            if let Event::Key(KeyEvent { code, modifiers }) = read()? {
                 let action = match code {
                     KeyCode::Enter => Action::Confirm,
                     KeyCode::Esc => Action::Quit,
+                    KeyCode::Char('c') if modifiers == KeyModifiers::CONTROL => Action::Quit,
                     KeyCode::Backspace => {
                         w.execute(MoveLeft(1))?;
                         self.input.pop();
