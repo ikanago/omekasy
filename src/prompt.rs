@@ -16,6 +16,7 @@ use crossterm::{
 
 pub enum Action {
     Confirm,
+    Quit,
     Update,
     None,
 }
@@ -91,6 +92,10 @@ impl Prompt {
                 Action::Confirm => {
                     break;
                 }
+                Action::Quit => {
+                    self.input = Vec::new();
+                    break;
+                }
                 Action::Update => {
                     self.render_input(w)?;
 
@@ -114,6 +119,7 @@ impl Prompt {
             if let Event::Key(KeyEvent { code, .. }) = read()? {
                 let action = match code {
                     KeyCode::Enter => Action::Confirm,
+                    KeyCode::Esc => Action::Quit,
                     KeyCode::Backspace => {
                         w.execute(MoveLeft(1))?;
                         self.input.pop();
