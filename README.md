@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![](https://img.shields.io/crates/v/omekasy.svg)](https://crates.io/crates/omekasy)
 
-[![asciicast](https://asciinema.org/a/u9xnGJqq20NajNHGEl6J5vizE.svg)](https://asciinema.org/a/u9xnGJqq20NajNHGEl6J5vizE)
+[![asciicast](https://asciinema.org/a/490055.svg)](https://asciinema.org/a/490055)
 
 `omekasy` is a command line application that converts alphanumeric characters in your input to various styles defined in Unicode.
 `omekasy` means "dress up" in Japanese.
