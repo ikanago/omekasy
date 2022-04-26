@@ -79,6 +79,10 @@ jobs:
             tar czf "${PKG_PATH}" "${PKG_DIR}"
           fi
 
+          if [ $(command -v sha256sum) ]; then
+            sha256sum "${PKG_PATH}"
+          fi
+
       - name: Publish
         if: ${{ contains(github.ref, '/tags/') }}
         uses: softprops/action-gh-release@v1
