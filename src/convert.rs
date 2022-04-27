@@ -52,6 +52,8 @@ mod tests {
             Font::SansBoldItalic,
             Font::Script,
             Font::BoldScript,
+            Font::Fraktur,
+            Font::BoldFraktur,
             Font::Monospace,
             Font::Blackboard,
         ])
@@ -174,6 +176,30 @@ mod tests {
         assert_eq!(
             "8𝓦𝔂𝓶𝓧𝓫𝓛𝓥3𝓷𝓘𝓝𝓤𝓱𝓞𝓸𝓠𝓴𝓚𝓖𝓯𝓾𝓨9𝓗𝓼𝓩𝓢𝓒675𝓳𝔃𝓑𝓔𝓽𝓐𝓣𝓓𝓕𝓜𝓡𝓰𝓟𝓹𝓮𝓪𝔁𝓲𝓙𝓬𝓻0𝓺4𝓵1𝔀2𝓭𝓿",
             converter.convert(&source, Font::BoldScript)
+        );
+    }
+
+    #[test]
+    fn fraktur() {
+        let converter = setup_converter();
+        let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv"
+            .chars()
+            .collect::<Vec<_>>();
+        assert_eq!(
+            "8𝔚𝔶𝔪𝔛𝔟𝔏𝔙3𝔫ℑ𝔑𝔘𝔥𝔒𝔬𝔔𝔨𝔎𝔊𝔣𝔲𝔜9ℌ𝔰ℨ𝔖ℭ675𝔧𝔷𝔅𝔈𝔱𝔄𝔗𝔇𝔉𝔐ℜ𝔤𝔓𝔭𝔢𝔞𝔵𝔦𝔍𝔠𝔯0𝔮4𝔩1𝔴2𝔡𝔳",
+            converter.convert(&source, Font::Fraktur)
+        );
+    }
+
+    #[test]
+    fn bold_fraktur() {
+        let converter = setup_converter();
+        let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv"
+            .chars()
+            .collect::<Vec<_>>();
+        assert_eq!(
+            "8𝖂𝖞𝖒𝖃𝖇𝕷𝖁3𝖓𝕴𝕹𝖀𝖍𝕺𝖔𝕼𝖐𝕶𝕲𝖋𝖚𝖄9𝕳𝖘𝖅𝕾𝕮675𝖏𝖟𝕭𝕰𝖙𝕬𝕿𝕯𝕱𝕸𝕽𝖌𝕻𝖕𝖊𝖆𝖝𝖎𝕵𝖈𝖗0𝖖4𝖑1𝖜2𝖉𝖛",
+            converter.convert(&source, Font::BoldFraktur)
         );
     }
 
