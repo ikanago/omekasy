@@ -47,5 +47,15 @@ Available font for now:
 - italic
 - script
 - bold-script
+- fraktur
+- bold-fraktur
 - monospace
 - blackboard
+
+Key bindings in interactive mode:
+| Key | Action |
+|---|---|
+|Ctrl-K|Move cursor up|
+|Ctrl-J|Move cursor down|
+|Enter|Select|
+|Ctrl-C, Esc|Quit|
