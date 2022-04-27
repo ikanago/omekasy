@@ -44,6 +44,8 @@ fn main() -> crossterm::Result<()> {
                 Font::SansBoldItalic,
                 Font::Script,
                 Font::BoldScript,
+                Font::Fraktur,
+                Font::BoldFraktur,
                 Font::Monospace,
                 Font::Blackboard,
             ];
