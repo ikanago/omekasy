@@ -53,6 +53,7 @@ mod tests {
             Font::Script,
             Font::BoldScript,
             Font::Fraktur,
+            Font::BoldFraktur,
             Font::Monospace,
             Font::Blackboard,
         ])
@@ -190,6 +191,17 @@ mod tests {
         );
     }
 
+    #[test]
+    fn bold_fraktur() {
+        let converter = setup_converter();
+        let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv"
+            .chars()
+            .collect::<Vec<_>>();
+        assert_eq!(
+            "8𝖂𝖞𝖒𝖃𝖇𝕷𝖁3𝖓𝕴𝕹𝖀𝖍𝕺𝖔𝕼𝖐𝕶𝕲𝖋𝖚𝖄9𝕳𝖘𝖅𝕾𝕮675𝖏𝖟𝕭𝕰𝖙𝕬𝕿𝕯𝕱𝕸𝕽𝖌𝕻𝖕𝖊𝖆𝖝𝖎𝕵𝖈𝖗0𝖖4𝖑1𝖜2𝖉𝖛",
+            converter.convert(&source, Font::BoldFraktur)
+        );
+    }
 
     #[test]
     fn monospace() {
