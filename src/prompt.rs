@@ -132,21 +132,13 @@ impl Prompt {
                         self.input.pop();
                         Action::Update
                     }
-                    KeyCode::Up => {
-                        if self.current_font > 0 {
-                            self.current_font -= 1;
-                            Action::Update
-                        } else {
-                            Action::None
-                        }
+                    KeyCode::Up => self.move_up_cursor(),
+                    KeyCode::Char('k') if modifiers == KeyModifiers::CONTROL => {
+                        self.move_up_cursor()
                     }
-                    KeyCode::Down => {
-                        if self.current_font + 1 < self.fonts.len() {
-                            self.current_font += 1;
-                            Action::Update
-                        } else {
-                            Action::None
-                        }
+                    KeyCode::Down => self.move_down_cursor(),
+                    KeyCode::Char('j') if modifiers == KeyModifiers::CONTROL => {
+                        self.move_down_cursor()
                     }
                     KeyCode::Char(c) => {
                         self.input.push(c);
@@ -159,6 +151,24 @@ impl Prompt {
         }
 
         Ok(Action::None)
+    }
+
+    fn move_up_cursor(&mut self) -> Action {
+        if self.current_font > 0 {
+            self.current_font -= 1;
+            Action::Update
+        } else {
+            Action::None
+        }
+    }
+
+    fn move_down_cursor(&mut self) -> Action {
+        if self.current_font + 1 < self.fonts.len() {
+            self.current_font += 1;
+            Action::Update
+        } else {
+            Action::None
+        }
     }
 
     fn render_input<W>(&mut self, w: &mut W) -> crossterm::Result<()>
