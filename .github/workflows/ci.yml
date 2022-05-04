@@ -55,6 +55,8 @@ jobs:
 
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: cache-v1
 
       - name: Build
         run: cargo build --locked --verbose
