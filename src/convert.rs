@@ -47,9 +47,9 @@ mod tests {
             Font::Italic,
             Font::BoldItalic,
             Font::Sans,
-            Font::SansBold,
-            Font::SansItalic,
-            Font::SansBoldItalic,
+            Font::BoldSans,
+            Font::ItalicSans,
+            Font::BoldItalicSans,
             Font::Script,
             Font::BoldScript,
             Font::Fraktur,
@@ -120,38 +120,38 @@ mod tests {
     }
 
     #[test]
-    fn sans_bold() {
+    fn bold_sans() {
         let converter = setup_converter();
         let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv"
             .chars()
             .collect::<Vec<_>>();
         assert_eq!(
             "𝟴𝗪𝘆𝗺𝗫𝗯𝗟𝗩𝟯𝗻𝗜𝗡𝗨𝗵𝗢𝗼𝗤𝗸𝗞𝗚𝗳𝘂𝗬𝟵𝗛𝘀𝗭𝗦𝗖𝟲𝟳𝟱𝗷𝘇𝗕𝗘𝘁𝗔𝗧𝗗𝗙𝗠𝗥𝗴𝗣𝗽𝗲𝗮𝘅𝗶𝗝𝗰𝗿𝟬𝗾𝟰𝗹𝟭𝘄𝟮𝗱𝘃",
-            converter.convert(&source, Font::SansBold)
+            converter.convert(&source, Font::BoldSans)
         );
     }
 
     #[test]
-    fn sans_italic() {
+    fn italic_sans() {
         let converter = setup_converter();
         let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv"
             .chars()
             .collect::<Vec<_>>();
         assert_eq!(
             "𝟴𝘞𝘺𝘮𝘟𝘣𝘓𝘝𝟯𝘯𝘐𝘕𝘜𝘩𝘖𝘰𝘘𝘬𝘒𝘎𝘧𝘶𝘠𝟵𝘏𝘴𝘡𝘚𝘊𝟲𝟳𝟱𝘫𝘻𝘉𝘌𝘵𝘈𝘛𝘋𝘍𝘔𝘙𝘨𝘗𝘱𝘦𝘢𝘹𝘪𝘑𝘤𝘳𝟬𝘲𝟰𝘭𝟭𝘸𝟮𝘥𝘷",
-            converter.convert(&source, Font::SansItalic)
+            converter.convert(&source, Font::ItalicSans)
         );
     }
 
     #[test]
-    fn sans_bold_italic() {
+    fn bold_italic_sans() {
         let converter = setup_converter();
         let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv"
             .chars()
             .collect::<Vec<_>>();
         assert_eq!(
             "𝟴𝙒𝙮𝙢𝙓𝙗𝙇𝙑𝟯𝙣𝙄𝙉𝙐𝙝𝙊𝙤𝙌𝙠𝙆𝙂𝙛𝙪𝙔𝟵𝙃𝙨𝙕𝙎𝘾𝟲𝟳𝟱𝙟𝙯𝘽𝙀𝙩𝘼𝙏𝘿𝙁𝙈𝙍𝙜𝙋𝙥𝙚𝙖𝙭𝙞𝙅𝙘𝙧𝟬𝙦𝟰𝙡𝟭𝙬𝟮𝙙𝙫",
-            converter.convert(&source, Font::SansBoldItalic)
+            converter.convert(&source, Font::BoldItalicSans)
         );
     }
 
