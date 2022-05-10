@@ -10,8 +10,10 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "3.1.18", features = ["derive"] }
-crossterm = "0.23.2"
+crossterm = { version = "0.23.2", optional = true }
+
+[features]
+default = ["crossterm"]
 
 [profile.dev]
 debug = 0
-

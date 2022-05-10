@@ -1,7 +1,9 @@
 use clap::ArgEnum;
 use clap::Parser;
 use font::Font;
+#[cfg(feature = "crossterm")]
 use prompt::Prompt;
+use std::error::Error;
 use std::io::stdin;
 use std::io::Read;
 
@@ -9,6 +11,7 @@ use crate::convert::Converter;
 
 mod convert;
 mod font;
+#[cfg(feature = "crossterm")]
 mod prompt;
 
 #[derive(Parser)]
@@ -25,7 +28,7 @@ struct Cli {
     input: Option<String>,
 }
 
-fn main() -> crossterm::Result<()> {
+fn main() -> Result<(), Box<dyn Error>> {
     let cli: Cli = Cli::parse();
 
     match (cli.input, cli.font) {
@@ -36,9 +39,14 @@ fn main() -> crossterm::Result<()> {
                 converter.convert(&input.chars().collect::<Vec<_>>(), font)
             );
         }
+        #[cfg(feature = "crossterm")]
         (None, None) => {
             let mut prompt = Prompt::new(Font::value_variants());
             prompt.start_prompt()?;
+        }
+        #[cfg(not(feature = "crossterm"))]
+        (None, None) => {
+            return Err("Compiled without terminal support. Please specify the font as a command line parameter".into());
         }
         (Some(input), None) => {
             let fonts = Font::value_variants();
