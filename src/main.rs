@@ -2,6 +2,8 @@ use clap::ArgEnum;
 use clap::Parser;
 use font::Font;
 use prompt::Prompt;
+use std::io::stdin;
+use std::io::Read;
 
 use crate::convert::Converter;
 
@@ -38,8 +40,24 @@ fn main() -> crossterm::Result<()> {
             let mut prompt = Prompt::new(Font::value_variants());
             prompt.start_prompt()?;
         }
-        _ => {
-            eprintln!("Specifying only one of font and input is not allowed.");
+        (Some(input), None) => {
+            let fonts = Font::value_variants();
+            let converter = Converter::new(fonts);
+            for &font in fonts {
+                println!(
+                    "{}",
+                    converter.convert(&input.chars().collect::<Vec<_>>(), font)
+                );
+            }
+        }
+        (None, Some(font)) => {
+            let converter = Converter::new(&[font]);
+            let mut input = String::new();
+            stdin().read_to_string(&mut input)?;
+            print!(
+                "{}",
+                converter.convert(&input.chars().collect::<Vec<_>>(), font)
+            );
         }
     }
 
