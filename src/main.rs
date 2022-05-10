@@ -1,3 +1,4 @@
+use clap::ArgEnum;
 use clap::Parser;
 use font::Font;
 use prompt::Prompt;
@@ -34,22 +35,7 @@ fn main() -> crossterm::Result<()> {
             );
         }
         (None, None) => {
-            let fonts = vec![
-                Font::Bold,
-                Font::Italic,
-                Font::BoldItalic,
-                Font::Sans,
-                Font::BoldSans,
-                Font::ItalicSans,
-                Font::BoldItalicSans,
-                Font::Script,
-                Font::BoldScript,
-                Font::Fraktur,
-                Font::BoldFraktur,
-                Font::Monospace,
-                Font::Blackboard,
-            ];
-            let mut prompt = Prompt::new(fonts);
+            let mut prompt = Prompt::new(Font::value_variants());
             prompt.start_prompt()?;
         }
         _ => {

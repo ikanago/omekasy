@@ -40,23 +40,10 @@ impl Converter {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use clap::ArgEnum;
 
     fn setup_converter() -> Converter {
-        Converter::new(&[
-            Font::Bold,
-            Font::Italic,
-            Font::BoldItalic,
-            Font::Sans,
-            Font::BoldSans,
-            Font::ItalicSans,
-            Font::BoldItalicSans,
-            Font::Script,
-            Font::BoldScript,
-            Font::Fraktur,
-            Font::BoldFraktur,
-            Font::Monospace,
-            Font::Blackboard,
-        ])
+        Converter::new(Font::value_variants())
     }
 
     #[test]
