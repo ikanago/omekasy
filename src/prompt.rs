@@ -23,7 +23,7 @@ pub enum Action {
 
 pub struct Prompt {
     input: Vec<char>,
-    fonts: Vec<Font>,
+    fonts: &'static [Font],
     converter: Converter,
     current_font: usize,
     num_whole_lines: usize,
@@ -33,8 +33,8 @@ impl Prompt {
     const POLL_DURATION_MS: u64 = 50;
     const PROMPT_SYMBOL: &'static str = "> ";
 
-    pub fn new(fonts: Vec<Font>) -> Self {
-        let converter = Converter::new(&fonts);
+    pub fn new(fonts: &'static [Font]) -> Self {
+        let converter = Converter::new(fonts);
         let num_whole_lines = fonts.len() + 1;
 
         Self {

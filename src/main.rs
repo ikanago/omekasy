@@ -1,11 +1,17 @@
+use clap::ArgEnum;
 use clap::Parser;
 use font::Font;
+#[cfg(feature = "crossterm")]
 use prompt::Prompt;
+use std::error::Error;
+use std::io::stdin;
+use std::io::Read;
 
 use crate::convert::Converter;
 
 mod convert;
 mod font;
+#[cfg(feature = "crossterm")]
 mod prompt;
 
 #[derive(Parser)]
@@ -22,7 +28,7 @@ struct Cli {
     input: Option<String>,
 }
 
-fn main() -> crossterm::Result<()> {
+fn main() -> Result<(), Box<dyn Error>> {
     let cli: Cli = Cli::parse();
 
     match (cli.input, cli.font) {
@@ -33,27 +39,33 @@ fn main() -> crossterm::Result<()> {
                 converter.convert(&input.chars().collect::<Vec<_>>(), font)
             );
         }
+        #[cfg(feature = "crossterm")]
         (None, None) => {
-            let fonts = vec![
-                Font::Bold,
-                Font::Italic,
-                Font::BoldItalic,
-                Font::Sans,
-                Font::BoldSans,
-                Font::ItalicSans,
-                Font::BoldItalicSans,
-                Font::Script,
-                Font::BoldScript,
-                Font::Fraktur,
-                Font::BoldFraktur,
-                Font::Monospace,
-                Font::Blackboard,
-            ];
-            let mut prompt = Prompt::new(fonts);
+            let mut prompt = Prompt::new(Font::value_variants());
             prompt.start_prompt()?;
         }
-        _ => {
-            eprintln!("Specifying only one of font and input is not allowed.");
+        #[cfg(not(feature = "crossterm"))]
+        (None, None) => {
+            return Err("Compiled without terminal support. Please specify the font as a command line parameter".into());
+        }
+        (Some(input), None) => {
+            let fonts = Font::value_variants();
+            let converter = Converter::new(fonts);
+            for &font in fonts {
+                println!(
+                    "{}",
+                    converter.convert(&input.chars().collect::<Vec<_>>(), font)
+                );
+            }
+        }
+        (None, Some(font)) => {
+            let converter = Converter::new(&[font]);
+            let mut input = String::new();
+            stdin().read_to_string(&mut input)?;
+            print!(
+                "{}",
+                converter.convert(&input.chars().collect::<Vec<_>>(), font)
+            );
         }
     }
 
