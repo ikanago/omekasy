@@ -38,6 +38,11 @@ jobs:
           echo "PROJECT_VERSION=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_ENV"
           echo "Version: ${{ env.PROJECT_VERSION }}"
 
+      - name: Check git tag against toml values
+        if: ${{ matrix.job.os != 'windows-2019' }} # windows too weird
+        run: |
+          grep -q "version = \"$PROJECT_VERSION\"" Cargo.toml
+
       - name: Build release
         run: cargo build --locked --verbose --release --target=${{ matrix.job.target }}
 
