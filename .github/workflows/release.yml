@@ -16,9 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { target: x86_64-unknown-linux-gnu, os: ubuntu-20.04 }
-          - { target: x86_64-apple-darwin, os: macos-latest }
-          - { target: x86_64-pc-windows-msvc, os: windows-2019 }
+          - { target: x86_64-unknown-linux-gnu, os: ubuntu-20.04, features: default }
+          - { target: wasm32-wasi, os: ubuntu-20.04, features: "" }
+          - { target: x86_64-apple-darwin, os: macos-latest, features: default }
+          - { target: x86_64-pc-windows-msvc, os: windows-2019, features: default }
 
     steps:
       - uses: actions/checkout@v3
@@ -42,17 +43,26 @@ jobs:
         if: ${{ matrix.job.os != 'windows-2019' }} # windows too weird
         run: |
           grep -q "version = \"$PROJECT_VERSION\"" Cargo.toml
+          grep -q "version = \"$PROJECT_VERSION\"" wapm.toml
 
       - name: Build release
-        run: cargo build --locked --verbose --release --target=${{ matrix.job.target }}
+        run: cargo build --locked --verbose --release --target=${{ matrix.job.target }} --no-default-features --features '${{ matrix.job.features }}'
         env:
           RUSTFLAGS: -C strip=symbols
+      
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: bin-${{ matrix.job.target }}
+          path: target/${{ matrix.job.target }}/release/${{ env.PROJECT_NAME }}${{ env.EXE_SUFFIX }}
 
       - name: Create tarball
         shell: bash
         run: |
           EXE_SUFFIX=""
           [ "${{ matrix.job.target }}" = "x86_64-pc-windows-msvc" ] && EXE_SUFFIX=".exe"
+          [ "${{ matrix.job.target }}" = "wasm32-wasi" ] && EXE_SUFFIX=".wasm"
+          echo "EXE_SUFFIX=${EXE_SUFFIX}" >> "$GITHUB_ENV"
 
           BIN_PATH="target/${{ matrix.job.target }}/release/omekasy${EXE_SUFFIX}"
 
@@ -95,3 +105,19 @@ jobs:
           git config --global user.email "runner@gha.local"
           git config --global user.name "Github Action"
           cargo publish --allow-dirty --token ${{ secrets.CRATES_IO_TOKEN }}
+
+  wapm-publish:
+    runs-on: ubuntu-20.04
+    needs: release
+    steps:
+      - name: Setup Wasmer
+        uses: wasmerio/setup-wasmer@v1
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v3
+        with:
+          name: bin-wasm32-wasi
+          path: target/wasm32-wasi/release
+      - name: WAPM publish
+        run: wapm publish
+        env:
+          WAPM_REGISTRY_TOKEN: ${{ secrets.WAPM_REGISTRY_TOKEN }}
