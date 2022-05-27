@@ -14,6 +14,29 @@ use crossterm::{
     ExecutableCommand, QueueableCommand,
 };
 
+/// Trait that abstructs collecting input key event.
+pub trait InputFeeder {
+    fn feed(&mut self) -> crossterm::Result<Option<KeyEvent>>;
+}
+
+/// Marker struct to collect input key event from stdin by polling.
+pub struct StdIn;
+
+impl StdIn {
+    const POLL_DURATION_MS: u64 = 50;
+}
+
+impl InputFeeder for StdIn {
+    fn feed(&mut self) -> crossterm::Result<Option<KeyEvent>> {
+        if poll(Duration::from_millis(Self::POLL_DURATION_MS))? {
+            if let Event::Key(event) = read()? {
+                return Ok(Some(event));
+            }
+        }
+        Ok(None)
+    }
+}
+
 pub enum Action {
     Confirm,
     Quit,
@@ -21,19 +44,22 @@ pub enum Action {
     None,
 }
 
-pub struct Prompt {
+pub struct Prompt<F: InputFeeder> {
     input: Vec<char>,
     fonts: &'static [Font],
     converter: Converter,
+    feeder: F,
     current_font: usize,
     num_whole_lines: usize,
 }
 
-impl Prompt {
-    const POLL_DURATION_MS: u64 = 50;
+impl<F> Prompt<F>
+where
+    F: InputFeeder,
+{
     const PROMPT_SYMBOL: &'static str = "> ";
 
-    pub fn new(fonts: &'static [Font]) -> Self {
+    pub fn new(fonts: &'static [Font], feeder: F) -> Self {
         let converter = Converter::new(fonts);
         let num_whole_lines = fonts.len() + 1;
 
@@ -41,6 +67,7 @@ impl Prompt {
             input: Vec::new(),
             fonts,
             converter,
+            feeder,
             current_font: 0,
             num_whole_lines,
         }
@@ -121,33 +148,28 @@ impl Prompt {
     where
         W: Write,
     {
-        if poll(Duration::from_millis(Self::POLL_DURATION_MS))? {
-            if let Event::Key(KeyEvent { code, modifiers }) = read()? {
-                let action = match code {
-                    KeyCode::Enter => Action::Confirm,
-                    KeyCode::Esc => Action::Quit,
-                    KeyCode::Char('c') if modifiers == KeyModifiers::CONTROL => Action::Quit,
-                    KeyCode::Backspace => {
-                        w.execute(MoveLeft(1))?;
-                        self.input.pop();
-                        Action::Update
-                    }
-                    KeyCode::Up => self.move_up_cursor(),
-                    KeyCode::Char('k') if modifiers == KeyModifiers::CONTROL => {
-                        self.move_up_cursor()
-                    }
-                    KeyCode::Down => self.move_down_cursor(),
-                    KeyCode::Char('j') if modifiers == KeyModifiers::CONTROL => {
-                        self.move_down_cursor()
-                    }
-                    KeyCode::Char(c) => {
-                        self.input.push(c);
-                        Action::Update
-                    }
-                    _ => Action::None,
-                };
-                return Ok(action);
-            }
+        if let Some(event) = self.feeder.feed()? {
+            let KeyEvent { code, modifiers } = event;
+            let action = match code {
+                KeyCode::Enter => Action::Confirm,
+                KeyCode::Esc => Action::Quit,
+                KeyCode::Char('c') if modifiers == KeyModifiers::CONTROL => Action::Quit,
+                KeyCode::Backspace => {
+                    w.execute(MoveLeft(1))?;
+                    self.input.pop();
+                    Action::Update
+                }
+                KeyCode::Up => self.move_up_cursor(),
+                KeyCode::Char('k') if modifiers == KeyModifiers::CONTROL => self.move_up_cursor(),
+                KeyCode::Down => self.move_down_cursor(),
+                KeyCode::Char('j') if modifiers == KeyModifiers::CONTROL => self.move_down_cursor(),
+                KeyCode::Char(c) => {
+                    self.input.push(c);
+                    Action::Update
+                }
+                _ => Action::None,
+            };
+            return Ok(action);
         }
 
         Ok(Action::None)
