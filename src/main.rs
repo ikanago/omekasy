@@ -3,7 +3,7 @@ use clap::Parser;
 use font::Font;
 #[cfg(feature = "crossterm")]
 use prompt::Prompt;
-use prompt::StdIn;
+use prompt::StdIo;
 use std::error::Error;
 use std::io::stdin;
 use std::io::Read;
@@ -42,7 +42,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
         #[cfg(feature = "crossterm")]
         (None, None) => {
-            let mut prompt = Prompt::new(Font::value_variants(), StdIn);
+            let mut prompt = Prompt::new(Font::value_variants(), StdIo);
             prompt.start_prompt()?;
         }
         #[cfg(not(feature = "crossterm"))]

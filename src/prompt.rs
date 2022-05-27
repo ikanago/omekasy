@@ -1,5 +1,6 @@
 use std::{
-    io::{self, Write},
+    io::{self, Stderr, Stdout, Write},
+    marker::PhantomData,
     time::Duration,
 };
 
@@ -15,18 +16,24 @@ use crossterm::{
 };
 
 /// Trait that abstructs collecting input key event.
-pub trait InputFeeder {
+pub trait IoEnvironment<Intermediate: Write, Output: Write> {
     fn feed(&mut self) -> crossterm::Result<Option<KeyEvent>>;
+
+    /// Returns a channel to output intermediate prompt.
+    fn intermediate_output(&self) -> Intermediate;
+
+    /// Returns a channel to write final result on.
+    fn output(&self) -> Output;
 }
 
-/// Marker struct to collect input key event from stdin by polling.
-pub struct StdIn;
+/// Marker struct to collect input key event from stdin by polling and output to stderr/stdout.
+pub struct StdIo;
 
-impl StdIn {
+impl StdIo {
     const POLL_DURATION_MS: u64 = 50;
 }
 
-impl InputFeeder for StdIn {
+impl IoEnvironment<Stderr, Stdout> for StdIo {
     fn feed(&mut self) -> crossterm::Result<Option<KeyEvent>> {
         if poll(Duration::from_millis(Self::POLL_DURATION_MS))? {
             if let Event::Key(event) = read()? {
@@ -34,6 +41,14 @@ impl InputFeeder for StdIn {
             }
         }
         Ok(None)
+    }
+
+    fn intermediate_output(&self) -> Stderr {
+        io::stderr()
+    }
+
+    fn output(&self) -> Stdout {
+        io::stdout()
     }
 }
 
@@ -44,22 +59,32 @@ pub enum Action {
     None,
 }
 
-pub struct Prompt<F: InputFeeder> {
+pub struct Prompt<Environment, Intermediate, Output>
+where
+    Environment: IoEnvironment<Intermediate, Output>,
+    Intermediate: Write,
+    Output: Write,
+{
     input: Vec<char>,
     fonts: &'static [Font],
     converter: Converter,
-    feeder: F,
+    environment: Environment,
     current_font: usize,
     num_whole_lines: usize,
+
+    _intermediate: PhantomData<Intermediate>,
+    _output: PhantomData<Output>,
 }
 
-impl<F> Prompt<F>
+impl<Environment, Intermediate, Output> Prompt<Environment, Intermediate, Output>
 where
-    F: InputFeeder,
+    Environment: IoEnvironment<Intermediate, Output>,
+    Intermediate: Write,
+    Output: Write,
 {
     const PROMPT_SYMBOL: &'static str = "> ";
 
-    pub fn new(fonts: &'static [Font], feeder: F) -> Self {
+    pub fn new(fonts: &'static [Font], environment: Environment) -> Self {
         let converter = Converter::new(fonts);
         let num_whole_lines = fonts.len() + 1;
 
@@ -67,9 +92,11 @@ where
             input: Vec::new(),
             fonts,
             converter,
-            feeder,
+            environment,
             current_font: 0,
             num_whole_lines,
+            _intermediate: PhantomData,
+            _output: PhantomData,
         }
     }
 
@@ -77,13 +104,14 @@ where
     pub fn start_prompt(&mut self) -> crossterm::Result<()> {
         enable_raw_mode()?;
 
-        let mut stderr = io::stderr();
-        self.initialize_prompt(&mut stderr)?;
-        self.render_input(&mut stderr)?;
+        let mut intermediate_output = self.environment.intermediate_output();
+        self.initialize_prompt(&mut intermediate_output)?;
+        self.render_input(&mut intermediate_output)?;
 
-        self.start_event_loop(&mut stderr)?;
+        self.start_event_loop(&mut intermediate_output)?;
 
-        io::stdout()
+        self.environment
+            .output()
             .execute(MoveLeft(self.input_line_len()))?
             .execute(Clear(ClearType::CurrentLine))?
             .execute(Print(format!(
@@ -148,7 +176,7 @@ where
     where
         W: Write,
     {
-        if let Some(event) = self.feeder.feed()? {
+        if let Some(event) = self.environment.feed()? {
             let KeyEvent { code, modifiers } = event;
             let action = match code {
                 KeyCode::Enter => Action::Confirm,
