@@ -122,7 +122,10 @@ impl Prompt {
         W: Write,
     {
         if poll(Duration::from_millis(Self::POLL_DURATION_MS))? {
-            if let Event::Key(KeyEvent { code, modifiers }) = read()? {
+            if let Event::Key(KeyEvent {
+                code, modifiers, ..
+            }) = read()?
+            {
                 let action = match code {
                     KeyCode::Enter => Action::Confirm,
                     KeyCode::Esc => Action::Quit,
