@@ -1,9 +1,9 @@
-use clap::ArgEnum;
+use clap::ValueEnum;
 use std::collections::HashMap;
 
 pub type FontMap = HashMap<char, char>;
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, ArgEnum)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, ValueEnum)]
 pub enum Font {
     Bold,
     Italic,
