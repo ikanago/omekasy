@@ -1,5 +1,5 @@
-use clap::ArgEnum;
 use clap::Parser;
+use clap::ValueEnum;
 use font::Font;
 #[cfg(feature = "crossterm")]
 use prompt::Prompt;
@@ -23,7 +23,7 @@ mod prompt;
 ///
 /// If you provide neither font type nor input, interactive prompt is displayed.
 struct Cli {
-    #[clap(short, long, arg_enum)]
+    #[clap(short, long, value_enum)]
     font: Option<Font>,
     input: Option<String>,
 }

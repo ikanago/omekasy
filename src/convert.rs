@@ -40,7 +40,7 @@ impl Converter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use clap::ArgEnum;
+    use clap::ValueEnum;
 
     fn setup_converter() -> Converter {
         Converter::new(Font::value_variants())
