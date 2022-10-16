@@ -25,7 +25,7 @@ jobs:
           components: rustfmt, clippy
 
       - name: Cache dependencies
-        uses: Swatinem/rust-cache@v1
+        uses: Swatinem/rust-cache@v2
 
       - name: Check format
         run: cargo fmt -- --check
