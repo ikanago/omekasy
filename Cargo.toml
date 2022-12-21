@@ -9,7 +9,7 @@ homepage = "https://github.com/ikanago/omekasy"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.0.29", features = ["derive"] }
+clap = { version = "4.0.30", features = ["derive"] }
 crossterm = { version = "0.25.0", optional = true }
 
 [features]
