@@ -1,4 +1,4 @@
-name: 'CI'
+name: CI
 
 on:
   push:
@@ -13,48 +13,20 @@ env:
 
 jobs:
   check:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-22.04'
+
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
-          override: true
-          toolchain: stable
-          components: rustfmt, clippy
+          components: clippy,rustfmt
 
       - name: Cache dependencies
         uses: Swatinem/rust-cache@v2
 
       - name: Check format
-        run: cargo fmt -- --check
-
-      - name: Build
-        run: cargo build --locked --verbose
-
-      - run: rustup component add clippy
-      - uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features -- -D warnings
-
-  unittest:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: ['ubuntu-18.04', 'ubuntu-20.04', 'macos-latest', 'windows-2019']
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          override: true
-          toolchain: stable
-
-    # - name: Cache dependencies
-    #   uses: Swatinem/rust-cache@v1
+        run: cargo fmt --all -- --check
 
       - name: Build
         run: cargo build --locked --verbose
