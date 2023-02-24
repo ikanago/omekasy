@@ -28,9 +28,6 @@ jobs:
       - name: Check format
         run: cargo fmt --all -- --check
 
-      - name: Setup Postgresql
-        run: psql ${DATABASE_URL} < ./migrations/20230222011102_init.sql
-
       - name: Build
         run: cargo build --locked --verbose
 
