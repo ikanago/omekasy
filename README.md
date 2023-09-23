@@ -51,11 +51,12 @@ Available font for now:
 - bold-fraktur
 - monospace
 - blackboard
+- emoji
 
 Key bindings in interactive mode:
-| Key | Action |
-|---|---|
-|Ctrl-K|Move cursor up|
-|Ctrl-J|Move cursor down|
-|Enter|Select|
-|Ctrl-C, Esc|Quit|
+| Key         | Action           |
+| ----------- | ---------------- |
+| Ctrl-K      | Move cursor up   |
+| Ctrl-J      | Move cursor down |
+| Enter       | Select           |
+| Ctrl-C, Esc | Quit             |
