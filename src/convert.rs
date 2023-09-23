@@ -24,16 +24,25 @@ impl Converter {
             .font_mappings
             .get(&font)
             .expect("Unexpected font specified");
-        source
-            .iter()
-            .map(|original| {
-                if let Some(converted) = mapping.get(original) {
-                    converted
-                } else {
-                    original
-                }
-            })
-            .collect()
+        let converted = source.iter().map(|original| {
+            if let Some(converted) = mapping.get(original) {
+                converted
+            } else {
+                original
+            }
+        });
+
+        if font == Font::Emoji {
+            // In this application, we want reginal indicator symbols to be rendered as emoji.
+            // To prevent them from being rendered as flags, we insert zero-width joiner(U+200C) between each character.
+            // For a simple implementation, we U+200C between all characters.
+            converted
+                .map(|c| c.to_string())
+                .collect::<Vec<_>>()
+                .join('\u{200C}'.to_string().as_str())
+        } else {
+            converted.collect()
+        }
     }
 }
 
@@ -211,6 +220,18 @@ mod tests {
         assert_eq!(
             "𝟠𝕎𝕪𝕞𝕏𝕓𝕃𝕍𝟛𝕟𝕀ℕ𝕌𝕙𝕆𝕠ℚ𝕜𝕂𝔾𝕗𝕦𝕐𝟡ℍ𝕤ℤ𝕊ℂ𝟞𝟟𝟝𝕛𝕫𝔹𝔼𝕥𝔸𝕋𝔻𝔽𝕄ℝ𝕘ℙ𝕡𝕖𝕒𝕩𝕚𝕁𝕔𝕣𝟘𝕢𝟜𝕝𝟙𝕨𝟚𝕕𝕧",
             converter.convert(&source, Font::Blackboard)
+        );
+    }
+
+    #[test]
+    fn emoji() {
+        let converter = setup_converter();
+        let source = "8WymXbLV3nINUhOoQkKGfuY9HsZSC675jzBEtATDFMRgPpeaxiJcr0q4l1w2dv"
+            .chars()
+            .collect::<Vec<_>>();
+        assert_eq!(
+            "8‌🇽‌🇾‌🇲‌🇾‌🇧‌🇲‌🇼‌3‌🇳‌🇯‌🇴‌🇻‌🇭‌🇵‌🇴‌🇷‌🇰‌🇱‌🇭‌🇫‌🇺‌🇿‌9‌🇮‌🇸‌🇿‌🇹‌🇩‌6‌7‌5‌🇯‌🇦‌🇨‌🇫‌🇹‌🇧‌🇺‌🇪‌🇬‌🇳‌🇸‌🇬‌🇶‌🇵‌🇪‌🇦‌🇽‌🇮‌🇰‌🇨‌🇷‌0‌🇶‌4‌🇱‌1‌🇼‌2‌🇩‌🇻",
+            converter.convert(&source, Font::Emoji)
         );
     }
 }
