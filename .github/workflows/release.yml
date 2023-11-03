@@ -66,7 +66,7 @@ jobs:
           PKG_SUFFIX=".tar.gz" ; case "${{ matrix.job.target }}" in *-pc-windows-*) PKG_SUFFIX=".zip" ;; esac;
           PKG_BASENAME="${PROJECT_NAME}-v${{ steps.project_version.outputs.PROJECT_VERSION }}-${{ matrix.job.target }}"
           PKG_PATH="${PKG_BASENAME}${PKG_SUFFIX}"
-          echo "PKG_PATH=${PKG_PATH}" >> "${GITHUB_ENV}"
+          echo "PKG_PATH=${PKG_PATH}" >> "${GITHUB_OUTPUT}"
 
           PKG_DIR="archive"
           mkdir -p "${PKG_DIR}"
