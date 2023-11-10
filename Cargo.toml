@@ -17,3 +17,6 @@ default = ["crossterm"]
 
 [profile.dev]
 debug = 0
+
+[profile.release]
+strip = "symbols"
