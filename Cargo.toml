@@ -1,6 +1,6 @@
 [package]
 name = "omekasy"
-version = "1.2.2"
+version = "1.2.3"
 authors = ["ikanago <ikanago-dev@protonmail.com>"]
 description = "Decorate alphanumeric characters in your input with various font; special characters in Unicode"
 license = "MIT"
