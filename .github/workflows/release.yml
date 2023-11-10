@@ -48,7 +48,7 @@ jobs:
           cp {README.md,LICENSE} "${PKG_DIR}"
           cp "target/${{ matrix.job.target }}/release/omekasy${{ matrix.job.binary-extension }}" "${PKG_DIR}"
 
-          PROJECT_VERSION=${GITHUB_REF#refs/tags/v}
+          PROJECT_VERSION="${GITHUB_REF#refs/tags/v}"
           TARBALL_PATH="${PROJECT_NAME}-v${PROJECT_VERSION}-${{ matrix.job.target }}${{ matrix.job.package-extension }}"
           echo "TARBALL_PATH=${TARBALL_PATH}" >> "${GITHUB_OUTPUT}"
 
@@ -63,8 +63,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ steps.create_tarball.outputs.TARBALL_PATH }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   cargo-publish:
     runs-on: ubuntu-20.04
