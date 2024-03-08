@@ -62,7 +62,7 @@ jobs:
 
       - name: Publish
         if: ${{ contains(github.ref, '/tags/') }}
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: ${{ steps.create_tarball.outputs.TARBALL_PATH }}
         env:
