@@ -34,7 +34,7 @@ jobs:
             }
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
@@ -62,17 +62,17 @@ jobs:
 
       - name: Publish
         if: ${{ contains(github.ref, '/tags/') }}
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: ${{ steps.create_tarball.outputs.TARBALL_PATH }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   cargo-publish:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: release
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Cargo publish
         run: |

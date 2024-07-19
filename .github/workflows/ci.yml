@@ -3,20 +3,20 @@ name: CI
 on:
   push:
     paths-ignore:
-      - '**.md'
+      - "**.md"
   pull_request:
     paths-ignore:
-      - '**.md'
+      - "**.md"
 
 env:
   CARGO_INCREMENTAL: 0
 
 jobs:
   check:
-    runs-on: 'ubuntu-22.04'
+    runs-on: "ubuntu-22.04"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: dtolnay/rust-toolchain@stable
         with:
