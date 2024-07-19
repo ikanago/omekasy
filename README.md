@@ -11,6 +11,7 @@
 
 ## Installation
 ### Homebrew
+Supports macOS(x86_64, aarch64) and Linux(x86_64).
 ```bash
 brew install ikanago/tap/omekasy
 ```
@@ -24,8 +25,8 @@ cargo install omekasy
 You can download binaries from [Releases](https://github.com/ikanago/omekasy/releases).
 
 ## Usage
-Just run without any options or arguments, a prompt will be shown up.
-You can select the style while watching the result.
+Just run without any options or arguments, then a prompt will be shown up.
+You can select the style while watching the result like above demo.
 ```bash
 omekasy
 ```
@@ -54,9 +55,9 @@ Available font for now:
 - emoji
 
 Key bindings in interactive mode:
-| Key         | Action           |
-| ----------- | ---------------- |
-| Ctrl-K      | Move cursor up   |
-| Ctrl-J      | Move cursor down |
-| Enter       | Select           |
-| Ctrl-C, Esc | Quit             |
+| Key          | Action           |
+| ------------ | ---------------- |
+| Up, Ctrl-K   | Move cursor up   |
+| Down, Ctrl-J | Move cursor down |
+| Enter        | Select           |
+| Ctrl-C, Esc  | Quit             |
