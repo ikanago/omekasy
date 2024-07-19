@@ -15,20 +15,26 @@ jobs:
       matrix:
         job:
           - {
-              target: x86_64-unknown-linux-gnu,
-              os: ubuntu-latest,
+              target: "x86_64-unknown-linux-gnu",
+              os: "ubuntu-22.04",
               binary-extension: "",
               package-extension: ".tar.gz",
             }
           - {
-              target: x86_64-apple-darwin,
-              os: macos-latest,
+              target: "x86_64-apple-darwin",
+              os: "macos-13",
               binary-extension: "",
               package-extension: ".tar.gz",
             }
           - {
-              target: x86_64-pc-windows-msvc,
-              os: windows-latest,
+              target: "aarch64-apple-darwin",
+              os: "macos-14",
+              binary-extension: "",
+              package-extension: ".tar.gz",
+            }
+          - {
+              target: "x86_64-pc-windows-msvc",
+              os: "windows-2022",
               binary-extension: ".exe",
               package-extension: ".zip",
             }
