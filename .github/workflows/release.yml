@@ -60,7 +60,7 @@ jobs:
           TARBALL_PATH="${PROJECT_NAME}-v${PROJECT_VERSION}-${{ matrix.job.target }}${{ matrix.job.package-extension }}"
           echo "TARBALL_PATH=${TARBALL_PATH}" >> "${GITHUB_OUTPUT}"
 
-          if [ "${{ matrix.job.os }}" = "windows-2019" ]; then
+          if [[ "${{ matrix.job.os }}" =~ ^windows- ]]; then
             7z a "${TARBALL_PATH}" "${PKG_DIR}"
           else
             tar czf "${TARBALL_PATH}" "${PKG_DIR}"
