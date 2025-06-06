@@ -34,7 +34,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     match (cli.input, cli.font) {
         (Some(input), Some(font)) => {
             let converter = Converter::new(&[font]);
-            println!(
+            print!(
                 "{}",
                 converter.convert(&input.chars().collect::<Vec<_>>(), font)
             );
@@ -62,6 +62,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             let converter = Converter::new(&[font]);
             let mut input = String::new();
             stdin().read_to_string(&mut input)?;
+            let input = input.trim_end();
             print!(
                 "{}",
                 converter.convert(&input.chars().collect::<Vec<_>>(), font)
