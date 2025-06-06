@@ -47,7 +47,7 @@ impl Prompt {
     }
 
     /// Start event loop to wait for user input and render output.
-    pub fn start_prompt(&mut self) -> crossterm::Result<()> {
+    pub fn start_prompt(&mut self) -> io::Result<()> {
         enable_raw_mode()?;
 
         let mut stderr = io::stderr();
@@ -74,7 +74,7 @@ impl Prompt {
     /// Ahead of event loop, reserve lines to render candidate outputs;
     /// `SavePosition` and `RestorePosition` does not work because the saved position is not
     /// intended one after rendering a new line.
-    fn initialize_prompt<W>(&mut self, w: &mut W) -> crossterm::Result<()>
+    fn initialize_prompt<W>(&mut self, w: &mut W) -> io::Result<()>
     where
         W: Write,
     {
@@ -85,7 +85,7 @@ impl Prompt {
         Ok(())
     }
 
-    fn start_event_loop<W>(&mut self, w: &mut W) -> crossterm::Result<()>
+    fn start_event_loop<W>(&mut self, w: &mut W) -> io::Result<()>
     where
         W: Write,
     {
@@ -117,7 +117,7 @@ impl Prompt {
         (Self::PROMPT_SYMBOL.len() + self.input.len()) as u16
     }
 
-    fn handle_key_event<W>(&mut self, w: &mut W) -> crossterm::Result<Action>
+    fn handle_key_event<W>(&mut self, w: &mut W) -> io::Result<Action>
     where
         W: Write,
     {
@@ -174,7 +174,7 @@ impl Prompt {
         }
     }
 
-    fn render_input<W>(&mut self, w: &mut W) -> crossterm::Result<()>
+    fn render_input<W>(&mut self, w: &mut W) -> io::Result<()>
     where
         W: Write,
     {
@@ -188,7 +188,7 @@ impl Prompt {
         Ok(())
     }
 
-    fn render_candidates<W>(&mut self, w: &mut W) -> crossterm::Result<()>
+    fn render_candidates<W>(&mut self, w: &mut W) -> io::Result<()>
     where
         W: Write,
     {
