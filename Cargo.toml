@@ -5,7 +5,7 @@ authors = ["ikanago <ikanago-dev@protonmail.com>"]
 description = "Decorate alphanumeric characters in your input with various font; special characters in Unicode"
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/ikanago/omekasy"
+repository = "https://github.com/ikanago/omekasy"
 edition = "2021"
 
 [dependencies]
